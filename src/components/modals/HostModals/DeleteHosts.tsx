@@ -183,6 +183,7 @@ const DeleteHosts = (props: PropsToDeleteHosts) => {
             }
           }
         }
+        setBtnSpinning(false);
       }
     );
   };
