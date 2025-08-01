@@ -57,6 +57,7 @@ const DeleteHosts = (props: PropsToDeleteHosts) => {
   const [executeHostsDelCommand] = useRemoveHostsMutation();
 
   const [spinning, setBtnSpinning] = React.useState<boolean>(false);
+  const [updateDns, setUpdateDns] = useState(false);
 
   // List of fields
   const fields = [
@@ -80,6 +81,19 @@ const DeleteHosts = (props: PropsToDeleteHosts) => {
           elementType="hosts"
           idAttr="fqdn"
         />
+      ),
+    },
+    {
+      id: "update-dns-checkbox",
+      pfComponent: (
+        <label>
+          <input
+            type="checkbox"
+            checked={updateDns}
+            onChange={(e) => setUpdateDns(e.target.checked)}
+          />
+          Remove A, AAAA, SSHFP and PTR records of the host managed by IPA DNS
+        </label>
       ),
     },
   ];
@@ -133,9 +147,14 @@ const DeleteHosts = (props: PropsToDeleteHosts) => {
     setIsModalErrorOpen(true);
   };
 
+  const placeholderFunction = (fqdn: string) => {
+    return () => {
+      console.log(`Called placeholderFunction for: ${fqdn}`);
+      // Future async logic here
+    };
+  };
   const deleteHosts = () => {
     setBtnSpinning(true);
-
     // Delete elements
     executeHostsDelCommand(props.selectedHostsData.selectedHosts).then(
       (response) => {
@@ -155,13 +174,15 @@ const DeleteHosts = (props: PropsToDeleteHosts) => {
                 status: "CUSTOM_ERROR",
                 data: errorData,
               } as FetchBaseQueryError;
-
               // Handle error
               handleAPIError(error);
             } else {
               // Update data from Redux
               props.selectedHostsData.selectedHosts.map((host) => {
                 dispatch(removeHost(host.fqdn[0]));
+                if (updateDns) {
+                  dispatch(placeholderFunction(host.fqdn[0]));
+                }
               });
 
               props.selectedHostsData.clearSelectedHosts();
