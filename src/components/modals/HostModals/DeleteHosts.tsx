@@ -182,6 +182,9 @@ const DeleteHosts = (props: PropsToDeleteHosts) => {
                 dispatch(removeHost(host.fqdn[0]));
                 if (updateDns) {
                   dispatch(placeholderFunction(host.fqdn[0]));
+                  //here will be the real function from carlas pr
+                  //the logic to implement is in the old webui ipaserver/plugins/host.py
+                  //here look for DNSRecordTYpes, rpcHOsts, DeleteDnsRecords, rpc
                 }
               });
 
