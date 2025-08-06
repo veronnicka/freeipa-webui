@@ -97,10 +97,17 @@ const AddRule = (props: PropsToAddRule) => {
     </MenuToggle>
   );
 
+  //const submitButtonRef = React.useRef<HTMLButtonElement>(null);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSelectGroup = (selection: any) => {
     setGroupSelected(selection.target.textContent);
     setIsSelectOpen(false);
+    // setTimeout(() => {
+    //   if (submitButtonRef.current && !submitButtonRef.current.disabled) {
+    //     submitButtonRef.current.focus();
+    //   }
+    // }, 100); // Adjust delay if needed
   };
 
   // List of fields
@@ -146,7 +153,9 @@ const AddRule = (props: PropsToAddRule) => {
   };
 
   // Add
-  const onAdd = () => {
+  const onAdd = (event: React.FormEvent) => {
+    event.preventDefault();
+
     const addPayload: AddPayload = {
       group: groupSelected,
       type: props.ruleType,
@@ -219,17 +228,19 @@ const AddRule = (props: PropsToAddRule) => {
   };
 
   const modalActions = [
-    <SecondaryButton
-      dataCy="modal-button-add"
+    <Button
+      data-cy="modal-button-add"
       key="add"
-      onClickHandler={onAdd}
+      //onClickHandler={onAdd}
       isLoading={addSpinning}
       spinnerAriaValueText="Adding"
+      onClick={onAdd}
       spinnerAriaLabel="Adding"
       isDisabled={buttonDisabled}
+      type="submit"
     >
       Add
-    </SecondaryButton>,
+    </Button>,
     <SecondaryButton
       dataCy="modal-button-add-and-add-another"
       key="add-another"
@@ -265,7 +276,22 @@ const AddRule = (props: PropsToAddRule) => {
         fields={fields}
         show={props.show}
         onClose={cleanAndCloseModal}
+        onSubmit={onAdd}
         actions={modalActions}
+        // submitButton={
+        //   <Button
+        //     //ref={submitButtonRef}
+        //     data-cy="modal-button-add"
+        //     key="add"
+        //     isLoading={addSpinning}
+        //     spinnerAriaValueText="Adding"
+        //     spinnerAriaLabel="Adding"
+        //     isDisabled={buttonDisabled}
+        //     type="submit"
+        //   >
+        //     Add
+        //   </Button>
+        // }
       />
     </>
   );

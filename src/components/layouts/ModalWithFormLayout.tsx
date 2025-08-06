@@ -27,6 +27,7 @@ export interface PropsToModal {
   actions: JSX.Element[];
   // is horizontal
   isHorizontal?: boolean;
+  submitButton?: React.ReactNode;
 }
 
 export interface Field {
@@ -90,6 +91,7 @@ const ModalWithFormLayout = (props: PropsToModal) => {
             {field.pfComponent}
           </FormGroup>
         ))}
+        {props.submitButton}
       </Form>
     </Modal>
   );
