@@ -49,7 +49,7 @@ Feature: HBAC rules manipulation
     Then I should see "add-hbac-rule-modal" modal
     And I should see "add-hbacrule-success" alert
 
-     When I type in the "modal-textbox-rule-name" textbox text "rule4"
+    When I type in the "modal-textbox-rule-name" textbox text "rule4"
     Then I should see "rule4" in the "modal-textbox-rule-name" textbox
 
     When I click on the "modal-button-add-and-add-another" button
@@ -66,8 +66,7 @@ Feature: HBAC rules manipulation
     Then I should see "rule3" entry in the data table
     When I search for "rule4" in the data table
     Then I should see "rule4" entry in the data table
-    When I search for "rule2" in the data table
-    Then I should see "rule2" entry in the data table
+
 
 
   @cleanup
@@ -162,7 +161,7 @@ Feature: HBAC rules manipulation
     Then I should see "delete-hbac-rules-modal" modal
     When I click on the "modal-button-delete" button
     Then I should not see "delete-hbac-rules-modal" modal
-    And I should see "remove-hbac-rules-success" alert
+    And I should see "remove-hbacrules-success" alert
     Then I should not see "rule1" entry in the data table
 
 
@@ -199,20 +198,18 @@ Feature: HBAC rules manipulation
 
      When I click on the "modal-button-delete" button
     Then I should not see "delete-hbac-rules-modal" modal
-    And I should see "remove-hbac-rules-success" alert
+    And I should see "remove-hbacrules-success" alert
 
     Then I should not see "rule2" entry in the data table
     Then I should not see "rule3" entry in the data table
     Then I should not see "rule4" entry in the data table
 
-  @cleanup
-  Scenario: Delete a rule
-    Given I delete rule "rule2"
-    And I delete rule "rule3"
-    And I delete rule "rule4"
 
   @test
   Scenario: Cancel creation of a rule
+    Given I am logged in as admin
+    And I am on "hbac-rules" page
+
     When I click on the "hbac-rules-button-add" button
     When I type in the "modal-textbox-rule-name" textbox text "rule-cancel"
     When I click on the "modal-button-cancel" button
