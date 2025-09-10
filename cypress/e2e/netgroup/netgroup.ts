@@ -131,8 +131,6 @@ Given(
     loginAsAdmin();
     navigateTo(`netgroups/${groupName}`);
 
-    ensureTabVisibleAndOpen("externalhost");
-
     cy.dataCy("settings-button-add-externalHost").click();
     cy.dataCy("add-external-host-modal").should("exist");
 
@@ -155,21 +153,114 @@ Given(
     loginAsAdmin();
     navigateTo(`netgroups/${groupName}`);
 
-    ensureTabVisibleAndOpen("externalhost");
-
     findEntryInTable(externalHost, "externalHost");
     entryExists(externalHost);
     checkEntry(externalHost);
 
-    cy.dataCy("settings-button-delete-externalHost").click();
-    cy.dataCy("remove-netgroup-members-modal").should("exist");
+    cy.dataCy("member-of-button-delete").click();
+    cy.dataCy("member-of-delete-modal").should("exist");
 
     cy.dataCy("modal-button-delete").click();
-    cy.dataCy("remove-netgroup-members-modal").should("not.exist");
+    cy.dataCy("member-of-delete-modal").should("not.exist");
     cy.dataCy("remove-netgroups-success").should("exist");
 
     entryDoesNotExist(externalHost);
 
+    logout();
+  }
+);
+
+Given(
+  "user {string} exists in table {string}",
+  (user: string, groupName: string) => {
+    loginAsAdmin();
+    navigateTo(`netgroups/${groupName}`);
+    cy.dataCy(`member-of-button-add`).click();
+    cy.dataCy("member-of-add-modal").should("exist");
+    addItemToRightList(user);
+    cy.dataCy("modal-button-add").click();
+
+    cy.dataCy("member-of-add-modal").should("not.exist");
+    cy.dataCy("add-member-success").should("exist");
+
+    searchForEntry(user);
+    entryExists(user);
+    logout();
+  }
+);
+
+Given(
+  "user group {string} exists in table {string}",
+  (userGroup: string, groupName: string) => {
+    loginAsAdmin();
+    navigateTo(`netgroups/${groupName}`);
+    cy.dataCy(`member-of-button-add`).click();
+
+    cy.dataCy("member-of-add-modal").should("exist");
+    addItemToRightList(userGroup);
+    cy.dataCy("modal-button-add").click();
+
+    cy.dataCy("member-of-add-modal").should("not.exist");
+    cy.dataCy("add-member-success").should("exist");
+    searchForEntry(userGroup);
+    entryExists(userGroup);
+    logout();
+  }
+);
+
+Given(
+  "host {string} exists in table {string}",
+  (hostFqdn: string, groupName: string) => {
+    loginAsAdmin();
+    navigateTo(`netgroups/${groupName}`);
+    cy.dataCy(`member-of-button-add`).click();
+
+    cy.dataCy("member-of-add-modal").should("exist");
+    addItemToRightList(hostFqdn);
+    cy.dataCy("modal-button-add").click();
+
+    cy.dataCy("member-of-add-modal").should("not.exist");
+    cy.dataCy("add-member-success").should("exist");
+    searchForEntry(hostFqdn);
+    entryExists(hostFqdn);
+    logout();
+  }
+);
+
+Given(
+  "hostgroup {string} exists in table {string}",
+  (hostGroup: string, groupName: string) => {
+    loginAsAdmin();
+    navigateTo(`netgroups/${groupName}`);
+    cy.dataCy(`member-of-button-add`).click();
+
+    cy.dataCy("member-of-add-modal").should("exist");
+    addItemToRightList(hostGroup);
+    cy.dataCy("modal-button-add").click();
+
+    cy.dataCy("member-of-add-modal").should("not.exist");
+    cy.dataCy("add-member-success").should("exist");
+    searchForEntry(hostGroup);
+    entryExists(hostGroup);
+    logout();
+  }
+);
+
+Given(
+  "netgroup {string} exists in table {string}",
+  (memberNetgroup: string, groupName: string) => {
+    loginAsAdmin();
+    navigateTo(`netgroups/${groupName}`);
+
+    cy.dataCy("member-of-button-add").click();
+    cy.dataCy("member-of-add-modal").should("exist");
+    addItemToRightList(memberNetgroup);
+    cy.dataCy("modal-button-add").click();
+
+    cy.dataCy("member-of-add-modal").should("not.exist");
+    cy.dataCy("add-member-success").should("exist");
+    searchForEntry(memberNetgroup);
+    entryExists(memberNetgroup);
     logout();
   }
 );
