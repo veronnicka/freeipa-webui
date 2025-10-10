@@ -4,13 +4,10 @@ import {
   Form,
   FormGroup,
   TextInput,
-  HelperText,
-  HelperTextItem,
   ActionGroup,
   Button,
   LoginPage,
   ListVariant,
-  ValidatedOptions,
 } from "@patternfly/react-core";
 // Images
 import BrandImg from "src/assets/images/product-name.png";
@@ -63,40 +60,7 @@ const ResetPasswordPage = () => {
   const [verifyPasswordHidden, setVerifyPasswordHidden] = React.useState(true);
   const [otpHidden, setOtpHidden] = React.useState(true);
 
-  // Verify passwords
-  const [passwordValidationResult, setPasswordValidationResult] =
-    React.useState({
-      isError: false,
-      message: "",
-      pfError: ValidatedOptions.default,
-    });
-
-  const resetVerifyPassword = () => {
-    setPasswordValidationResult({
-      isError: false,
-      message: "",
-      pfError: ValidatedOptions.default,
-    });
-  };
-  // Checks that the passwords are the same
-  const validatePasswords = () => {
-    if (newPassword !== verifyPassword) {
-      const verifyPassVal = {
-        isError: true,
-        message: "Passwords must match",
-        pfError: ValidatedOptions.error,
-      };
-      setPasswordValidationResult(verifyPassVal);
-      return true; // is error
-    }
-    resetVerifyPassword();
-    return false;
-  };
-
-  // Verify the passwords are the same when we update a password value
-  React.useEffect(() => {
-    validatePasswords();
-  }, [newPassword, verifyPassword]);
+  // Validation handled via PasswordInput rules
 
   // Reset button should be disabled if some conditions are met
   const evaluateResetButtonDisabled = () => {
@@ -222,13 +186,14 @@ const ResetPasswordPage = () => {
           passwordHidden={verifyPasswordHidden}
           isRequired={true}
           isDisabled={!uid}
-          validated={passwordValidationResult.pfError}
+          rules={[
+            {
+              id: "verify-match",
+              message: "Passwords must match",
+              validate: (v: string) => v === newPassword,
+            },
+          ]}
         />
-        <HelperText>
-          <HelperTextItem variant="error">
-            {passwordValidationResult.message}
-          </HelperTextItem>
-        </HelperText>
       </FormGroup>
       <FormGroup label="OTP" fieldId="otp">
         <PasswordInput

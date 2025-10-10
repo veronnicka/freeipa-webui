@@ -5,11 +5,8 @@ import {
   Checkbox,
   Flex,
   FormGroup,
-  HelperTextItem,
-  HelperText,
   Radio,
   TextInput,
-  ValidatedOptions,
 } from "@patternfly/react-core";
 // Components
 import ModalWithFormLayout, {
@@ -28,11 +25,7 @@ import { SerializedError } from "@reduxjs/toolkit";
 // Icons
 import { InfoCircleIcon } from "@patternfly/react-icons";
 // Data types
-import {
-  DEFAULT_ERROR_VALIDATION_DATA,
-  ErrorValidationData,
-  RangeType,
-} from "src/utils/datatypes/globalDataTypes";
+import { RangeType } from "src/utils/datatypes/globalDataTypes";
 
 interface PropsToAddTrustModal {
   isOpen: boolean;
@@ -85,36 +78,17 @@ const AddTrustModal = (props: PropsToAddTrustModal) => {
   const [preSharedPwdVerifyHidden, setPreSharedPwdVerifyHidden] =
     React.useState<boolean>(true);
 
-  React.useEffect(() => {
-    verifyPreSharedPwdVerifyValidationHandler();
-  }, [preSharedPwd, preSharedPwdVerify]);
-
-  // Pre-shared password verify validation
-  const [preSharedPwdVerifyValidation, setPreSharedPwdVerifyValidation] =
-    React.useState<ErrorValidationData>(DEFAULT_ERROR_VALIDATION_DATA);
-
-  const resetPreSharedPwdVerifyValidation = () => {
-    setPreSharedPwdVerifyValidation(DEFAULT_ERROR_VALIDATION_DATA);
-  };
-
-  const verifyPreSharedPwdVerifyValidationHandler = () => {
-    if (preSharedPwd !== preSharedPwdVerify) {
-      const verifyPassVal = {
-        isError: true,
-        message: "Passwords must match",
-        pfError: ValidatedOptions.error,
-      };
-      setPreSharedPwdVerifyValidation(verifyPassVal);
-      return true; // is error
-    }
-    resetPreSharedPwdVerifyValidation();
-    return false;
-  };
+  // Validation handled inline via PasswordInput rules
 
   const validateFields = () => {
-    resetPreSharedPwdVerifyValidation();
-    const validation = verifyPreSharedPwdVerifyValidationHandler();
-    return !validation;
+    if (authMethod === "pre-shared-pwd") {
+      if (preSharedPwd === "" || preSharedPwdVerify === "") return false;
+      if (preSharedPwd !== preSharedPwdVerify) return false;
+    }
+    if (authMethod === "admin") {
+      if (adminAccount === "" || adminAccounPwd === "") return false;
+    }
+    return domainName !== "";
   };
 
   const clearFields = () => {
@@ -352,7 +326,6 @@ const AddTrustModal = (props: PropsToAddTrustModal) => {
                 onRevealHandler={() =>
                   setPreSharedPwdHidden(!preSharedPwdHidden)
                 }
-                onFocus={resetPreSharedPwdVerifyValidation}
                 passwordHidden={preSharedPwdHidden}
               />
             </FormGroup>
@@ -374,18 +347,15 @@ const AddTrustModal = (props: PropsToAddTrustModal) => {
                   onRevealHandler={() =>
                     setPreSharedPwdVerifyHidden(!preSharedPwdVerifyHidden)
                   }
-                  onFocus={resetPreSharedPwdVerifyValidation}
                   passwordHidden={preSharedPwdVerifyHidden}
-                  validated={preSharedPwdVerifyValidation.pfError}
+                  rules={[
+                    {
+                      id: "verify-match",
+                      message: "Passwords must match",
+                      validate: (v: string) => v === preSharedPwd,
+                    },
+                  ]}
                 />
-                {preSharedPwdVerifyValidation.isError &&
-                  preSharedPwdVerifyValidation.message !== "" && (
-                    <HelperText>
-                      <HelperTextItem variant="error">
-                        {preSharedPwdVerifyValidation.message}
-                      </HelperTextItem>
-                    </HelperText>
-                  )}
               </>
             </FormGroup>
           </div>
@@ -480,7 +450,6 @@ const AddTrustModal = (props: PropsToAddTrustModal) => {
 
   const isButtonDisabled =
     isAddButtonSpinning ||
-    preSharedPwdVerifyValidation.isError ||
     domainName.length === 0 ||
     isAdminAccountDisabled ||
     isPreSharedPwdDisabled;
