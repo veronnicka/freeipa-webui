@@ -17,6 +17,7 @@ Then(
 export const selectOption = (option: string, selector: string) => {
   cy.dataCy(selector + "-toggle").click();
   cy.dataCy(selector + "-toggle").should("have.attr", "aria-expanded", "true");
+  cy.dataCy(selector + "-" + option).should("be.visible");
   cy.dataCy(selector + "-" + option)
     .find("button")
     .scrollIntoView();
