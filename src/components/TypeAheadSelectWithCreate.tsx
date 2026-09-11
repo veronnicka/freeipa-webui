@@ -235,16 +235,25 @@ const TypeAheadSelectWithCreate = (props: PropsToTypeAheadSelectWithCreate) => {
       toggle={toggle}
     >
       <SelectList id={props.id + "-select-list"}>
-        {selectOptions.map((option, index) => (
-          <SelectOption
-            key={option.value || option.children}
-            isFocused={focusedItemIndex === index}
-            className={option.className}
-            id={props.id + "-select-option-" + index}
-            {...option}
-            ref={null}
-          />
-        ))}
+        {selectOptions.map((option, index) => {
+          const optionValue = String(option.value ?? "");
+          const optionDataCy =
+            optionValue === ""
+              ? `${props.id}-select-no-selection`
+              : `${props.id}-select-${optionValue}`;
+
+          return (
+            <SelectOption
+              key={option.value || option.children}
+              isFocused={focusedItemIndex === index}
+              className={option.className}
+              id={props.id + "-select-option-" + index}
+              {...option}
+              data-cy={optionDataCy}
+              ref={null}
+            />
+          );
+        })}
       </SelectList>
     </Select>
   );
